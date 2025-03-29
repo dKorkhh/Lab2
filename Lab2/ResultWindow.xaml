@@ -1,0 +1,24 @@
+﻿<Window x:Class="Lab2.ResultWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab2"
+        mc:Ignorable="d"
+        Title="ResultWindow" Height="450" Width="800">
+    <Grid>
+        <Border Background="White" CornerRadius="8" Padding="10" Margin="20" Name="ResultPanel" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="..." x:Name="Firstname" FontSize="16" HorizontalAlignment="Center" Foreground="#555"/>
+                <TextBlock Text="..." x:Name="Lastname" FontSize="16" HorizontalAlignment="Center" Foreground="#555"/>
+                <TextBlock Text="..." x:Name="EmailResult" FontSize="16" HorizontalAlignment="Center" Foreground="#555"/>
+                <TextBlock Text="..." x:Name="DateBirth" FontSize="16" HorizontalAlignment="Center" Foreground="#555"/>
+                
+                <TextBlock Text="..." x:Name="ZodiacResult" FontSize="16" HorizontalAlignment="Center" Foreground="#555"/>
+                <TextBlock Text="..." x:Name="ChineseZodiacResult" FontSize="16" HorizontalAlignment="Center" Foreground="#555"/>
+                <TextBlock Text="..." x:Name="IsAdult" FontSize="16" HorizontalAlignment="Center" Foreground="#555"/>
+                <TextBlock Text="..." x:Name="IsBirthday" FontSize="16" HorizontalAlignment="Center" Foreground="#555"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
