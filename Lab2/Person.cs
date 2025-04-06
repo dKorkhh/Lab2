@@ -18,10 +18,6 @@ namespace Lab2
         private string chineseSign;
         private bool isBirthday;
 
-        public Person()
-        {
-        }
-
         public Person(string firstName, string lastName, string email, DateTime birthDate)
         {
             this.firstName = firstName;

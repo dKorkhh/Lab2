@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lab2.Exception;
+using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -105,10 +106,14 @@ namespace Lab2
             int age = DateTime.Now.Year - birthDate.Year;
             if (DateTime.Now < birthDate.AddYears(age)) age--;
 
-            if (birthDate > DateTime.Now || age > 135)
+            if (age > 135)
             {
-                MessageBox.Show("Неправильна дата народження");
-                return false;
+                throw new TooOldBirthDateException();
+            }
+
+            if (birthDate > DateTime.Now)
+            {
+                throw new FutureBirthDateException();
             }
 
             return true;
