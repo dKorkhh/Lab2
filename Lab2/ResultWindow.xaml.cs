@@ -14,9 +14,6 @@ using System.Windows.Shapes;
 
 namespace Lab2
 {
-    /// <summary>
-    /// Interaction logic for ResultWindow.xaml
-    /// </summary>
     public partial class ResultWindow : Window
     {
         public ResultWindow(Person person)

@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Lab2.Exception;
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,7 +14,7 @@ namespace Lab2
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        /*public MainWindow()
         {
             InitializeComponent();
 
@@ -55,11 +59,16 @@ namespace Lab2
             string firstName = FirstNameBox.Text;
             string lastName = LastNameBox.Text;
             string email = EmailBox.Text;
-            DateTime birthDate = BirthDatePicker.SelectedDate.Value;
+            DateTime? birthDate = BirthDatePicker.SelectedDate;
 
             try
             {
-                Person person = await Task.Run(() => new Person(firstName, lastName, email, birthDate));
+                if (birthDate == null)
+                {
+                    throw new NullBirthDateException();
+                }
+
+                Person person = await Task.Run(() => new Person(firstName, lastName, email, birthDate.Value));
 
                 if (person.IsBirthday)
                 {
@@ -71,7 +80,11 @@ namespace Lab2
                     resultWindow.Show();
                 });
             }
-            catch (Exception ex)
+            catch (NullBirthDateException ex)
+            {
+                MessageBox.Show("Будь ласка, виберіть дату народження.");
+            }
+            catch (System.Exception ex)
             {
                 MessageBox.Show($"Помилка: {ex.Message}");
             }
@@ -95,9 +108,13 @@ namespace Lab2
                 return false;
             }
 
-            if (!IsValidEmail(EmailBox.Text))
+            try
             {
-                MessageBox.Show("Неправильна пошта");
+                IsValidEmail(EmailBox.Text);
+            }
+            catch (InvalidEmailFormatException ex)
+            {
+                MessageBox.Show($"Помилка: {ex.Message}");
                 return false;
             }
 
@@ -105,20 +122,43 @@ namespace Lab2
             int age = DateTime.Now.Year - birthDate.Year;
             if (DateTime.Now < birthDate.AddYears(age)) age--;
 
-            if (birthDate > DateTime.Now || age > 135)
+            try
             {
-                MessageBox.Show("Неправильна дата народження");
+                if (age > 135)
+                {
+                    throw new TooOldBirthDateException();
+                }
+
+                if (birthDate > DateTime.Now)
+                {
+                    throw new FutureBirthDateException();
+                }
+            }
+            catch (TooOldBirthDateException ex)
+            {
+                MessageBox.Show($"Помилка: {ex.Message}");
+                return false;
+            }
+            catch (FutureBirthDateException ex)
+            {
+                MessageBox.Show($"Помилка: {ex.Message}");
                 return false;
             }
 
             return true;
         }
 
-        private bool IsValidEmail(string email)
+
+
+        private void IsValidEmail(string email)
         {
-            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            return Regex.IsMatch(email, pattern);
+            string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            if (!Regex.IsMatch(email, emailPattern))
+            {
+                throw new InvalidEmailFormatException();
+            }
         }
+
 
         private void GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
@@ -137,6 +177,68 @@ namespace Lab2
                 if (textBox == FirstNameBox) textBox.Text = "Ім'я";
                 if (textBox == LastNameBox) textBox.Text = "Прізвище";
                 if (textBox == EmailBox) textBox.Text = "Пошта";
+            }
+        }*/
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            LoadUsers();
+            dataGrid.ItemsSource = users;
+        }
+
+        private ObservableCollection<Person> users;
+
+        private void LoadUsers()
+        {
+            if (File.Exists("users.json"))
+            {
+                string json = File.ReadAllText("users.json");
+                users = JsonSerializer.Deserialize<ObservableCollection<Person>>(json);
+            }
+            else
+            {
+                users = new ObservableCollection<Person>();
+                for (int i = 0; i < 50; i++)
+                {
+                    users.Add(new Person($"FirstName{i}", $"LastName{i}", $"email{i}@domain.com", DateTime.Now.AddYears(-20).AddDays(i)));
+                }
+                SaveUsers();
+            }
+        }
+
+        private void SaveUsers()
+        {
+            string json = JsonSerializer.Serialize(users);
+            File.WriteAllText("users.json", json);
+        }
+
+        private void AddUser_Click(object sender, RoutedEventArgs e)
+        {
+            var newUser = new Person("NewFirstName", "NewLastName", "newemail@domain.com", DateTime.Now.AddYears(-25));
+            users.Add(newUser);
+            SaveUsers();
+        }
+
+        private void EditUser_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid.SelectedItem is Person selectedUser)
+            {
+                selectedUser.FirstName = "EditedFirstName";
+                selectedUser.LastName = "EditedLastName";
+                selectedUser.Email = "editedemail@domain.com";
+                selectedUser.BirthDate = DateTime.Now.AddYears(-30);
+                dataGrid.Items.Refresh();
+                SaveUsers();
+            }
+        }
+
+        private void DeleteUser_Click(object sender, RoutedEventArgs e)
+        {
+            if (dataGrid.SelectedItem is Person selectedUser)
+            {
+                users.Remove(selectedUser);
+                SaveUsers();
             }
         }
     }
