@@ -7,9 +7,10 @@ using System.Windows;
 
 namespace Lab2.Exception
 {
-    public class InvalidEmailFormatException : FormatException
+    class EmptyFormException : RankException
     {
-        public InvalidEmailFormatException() : base("Невірний формат електронної пошти.") {
+        public EmptyFormException() : base("Не всі поля заповнені") {
+           
         }
     }
 }
